@@ -66,14 +66,10 @@ export const AuthProvider = ({children}: Props)=>{
                 maxAge:60 * 60,
                 path: "/"
             })
-            setCookie(null, "user.admin", JSON.stringify(response.data.user), {
-                maxAge: 60 * 60,
-                path: "/"
-            });
         })
         .then(()=>{
             Toast({message:'Seja bem vindo!',isSucess:true})
-            router.push("/")
+            router.push("/home-page")
         })
         .catch((err)=>{
             console.log(err)

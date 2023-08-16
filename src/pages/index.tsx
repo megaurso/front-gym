@@ -1,13 +1,13 @@
-import Header from "@/components/hearder";
-import { BsWhatsapp } from 'react-icons/bs';
+import Header from "@/components/headers/hearder";
+import { BsWhatsapp } from "react-icons/bs";
 import Link from "next/link";
 
-export default function Home() {
+const Home = () => {
   return (
     <div className="w-screen h-screen flex  relative bg-cover bg-center bg-no-repeat bg-[url('/happy.jpg')]">
       <div className="container mx-auto p-6 rounded-lg shadow-lg flex flex-col">
         <Header/>
-        <div className="flex justify-between h-5/6 w-full items-end">
+        <main className="flex justify-between h-5/6 w-full items-end">
           <div className="text-yellow-300">
             <p className="uppercase text-5xl font-bold">o melhor!</p>
             <p className="text-3xl">sistema para atender diversos nichos fitness</p>
@@ -18,8 +18,10 @@ export default function Home() {
               <BsWhatsapp />
             </Link>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );
 }
+
+export default Home

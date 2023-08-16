@@ -1,7 +1,7 @@
 import CardLogin from "@/components/cardLogin";
-import Header from "@/components/hearder";
+import Header from "@/components/headers/hearder";
 
-export default function Home() {
+const Login = () =>{
   return (
     <div className="w-screen h-screen flex  relative bg-cover bg-center bg-no-repeat bg-[url('/happy.jpg')]">
       <div className="container mx-auto p-6 rounded-lg shadow-lg flex flex-col items-center">
@@ -12,3 +12,4 @@ export default function Home() {
 
   );
 }
+export default Login

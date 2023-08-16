@@ -20,7 +20,7 @@ const CardLogin =()=>{
           <form onSubmit={handleSubmit(onFormSubmit)}>
             <input className="w-full mb-3 px-3 py-2 border rounded bg-transparent outline-none text-white" type="email" placeholder="Email" {...register("email")} required/>
             <input className="w-full mb-3 px-3 py-2 border rounded bg-transparent outline-none text-white" type="password" placeholder="Password" {...register("password")} required/>
-            <Link href={"/register"} className="text-white text-xs flex justify-end mb-2">Não tem uma conta? Registre agora</Link>
+            <Link href={"/register"} className="text-white text-xs flex justify-end mb-2">Não tem uma conta? <span className="pl-1 text-blue-500">Registre agora</span></Link>
             <button className="w-full bg-yellow-300 text-blue-950 py-2 rounded hover:bg-blue-700 hover:text-white transition duration-300" type="submit">Login</button>
           </form>
         </div>
