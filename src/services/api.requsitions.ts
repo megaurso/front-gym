@@ -34,15 +34,14 @@ export const getUser = async (token: string, id: string) => {
 export const editUser = async (
   token: string,
   idUser: string,
-  user: UserProps
+  updatedFields: Partial<UserProps>
 ) => {
   try {
-    const response = await api.patch(`/api/users/${idUser}`, user, {
+    const response = await api.patch(`/api/users/${idUser}`, updatedFields, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    Toast({ message: "Usuario editado", isSucess: true });
     return response.data;
   } catch (error) {
     console.log(error);
@@ -104,12 +103,12 @@ export const editPlans = async (
 
 export const getPlans = async (token: string) => {
   try {
-    const response = await api.get("/api/users", {
+    const response = await api.get("/api/plans", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    response.data;
+    return response.data;
   } catch (error) {
     console.log(error);
     return null;
@@ -118,7 +117,7 @@ export const getPlans = async (token: string) => {
 
 export const getOnePlan = async (token: string, idPlan: string) => {
   try {
-    const response = await api.get(`/api/users/${idPlan}`, {
+    const response = await api.get(`/api/plans/${idPlan}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

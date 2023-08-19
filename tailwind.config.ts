@@ -13,9 +13,14 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
-      fontFamily:{
-        'montserrat': ['Montserrat', 'sans-serif'],
-      }
+      fontFamily: {
+        montserrat: ["Montserrat", "sans-serif"],
+      },
+      colors: {
+        amarelo: "#ffbb00",
+        azul: "#4564ba",
+        "branco-90": "#e6e6e6",
+      },
     },
   },
   screens: {

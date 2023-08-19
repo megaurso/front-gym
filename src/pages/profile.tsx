@@ -1,9 +1,94 @@
 import HeaderHomes from "@/components/headers/header.homes"
 import { GetServerSideProps } from "next"
 import {BiEdit} from "react-icons/bi"
-import nookies from "nookies"
+import nookies, { parseCookies } from "nookies"
+import { use, useEffect, useRef, useState } from "react"
+import { PlansInfo } from "@/schema/plans.schemas"
+import { editUser, getOnePlan, getPlans, getUser } from "@/services/api.requsitions"
+import { InfoUserEdit } from "@/schema/user.schema"
+import Toast from "@/components/toast"
 
 const Profile = () =>{
+    const cookies = parseCookies()
+    const token = cookies["user.token"]
+    const userId = cookies["user.user_id"]
+    const [plans, setPlans] = useState<PlansInfo[]>([]);
+    const [currentPlan, setCurrentPlan] = useState<PlansInfo | null>();
+    const [user, setUser] = useState<InfoUserEdit>();
+    const [loading,setLoading] = useState(false)
+    const [fieldValues, setFieldValues] = useState({
+        name: user?.name || "",
+        email: user?.email || "",
+        cpf: user?.cpf || "",
+        phone: user?.phone || "",
+        password: "", 
+    });
+    
+    useEffect(()=>{
+        const fetchData = async () => {
+            const allPlans = await getPlans(token)
+            const userData = await getUser(token, userId)
+            setUser(userData)
+            setPlans(allPlans.data)
+            if (userData && userData.current_plan) {
+                const userPlan = await getOnePlan(token, userData.current_plan);
+                
+                if (userPlan) {
+                  setCurrentPlan(userPlan);
+                } 
+            } 
+        }
+        fetchData()
+    },[token,loading])
+    
+    const handlePlanChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedPlanId = e.target.value;
+        setLoading(true)
+
+        if (selectedPlanId === "no-plan") {
+          setCurrentPlan(null);
+        } else {
+          const selectedPlan = plans.find((plan) => plan.id === selectedPlanId);
+          if (selectedPlan) {
+            try {
+                const updatedUserFields = {current_plan: selectedPlanId,};
+                await editUser(token,userId,updatedUserFields)
+                setLoading(false)
+                Toast({ message: "Plano editado com sucesso", isSucess: true });
+                
+            } catch (error) {
+                console.log(error)
+            }
+          }
+        }
+    };
+
+    const handleFieldChange = (field: string, value: string) => {
+        setFieldValues((prevFieldValues) => ({
+          ...prevFieldValues,
+          [field]: value,
+        }));
+    };
+
+    const handleProfileFieldEdit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        const fieldName = e.currentTarget.getAttribute("data-field");
+        const fieldValue = fieldValues[fieldName as keyof typeof fieldValues];
+
+        if (fieldName === "cpf" && fieldValue.length === 10) {
+            Toast({ message: "O CPF deve conter 11 dígitos.", isSucess: false });
+            return;
+        }
+
+        try {
+            const updatedUserFields = { [fieldName!]: fieldValues[fieldName as keyof typeof fieldValues] };
+            await editUser(token, userId, updatedUserFields);
+            Toast({ message: "Campo editado com sucesso", isSucess: true });
+          } catch (error) {
+            console.log(error);
+        }
+       
+    }
+
     return (
         <div className="w-screen h-screen">
             <div className="container mx-auto p-6 rounded-lg shadow-2xl flex flex-col">
@@ -14,15 +99,15 @@ const Profile = () =>{
                         <div className="flex flex-col text-2xl">
                             <h3 className="text-3xl">Nome de exibição</h3>
                             <div className="flex pl-1 cursor-pointer"> 
-                                <input defaultValue="Bernardo" />
-                                <BiEdit/>
+                                <input value={fieldValues.name || user?.name} onChange={(e) => handleFieldChange('name', e.target.value)} />
+                                <button data-field="name"  disabled={!fieldValues.name.trim()} onClick={handleProfileFieldEdit} type="button"><BiEdit/></button>
                             </div>
                         </div>
                         <div className="flex flex-col text-2xl">
                             <h3 className="text-3xl">Email de exibição</h3>
                              <div className="pl-1 flex cursor-pointer">
-                                <input defaultValue="email12345@.com" />
-                                <BiEdit/>
+                                <input value={fieldValues.email || user?.email} onChange={(e) => handleFieldChange('email', e.target.value)} />
+                                <button data-field="email"  disabled={!fieldValues.email.trim()} onClick={handleProfileFieldEdit} type="button"><BiEdit/></button>
                             </div>
                         </div>
                     </div>
@@ -31,15 +116,15 @@ const Profile = () =>{
                         <div className="flex flex-col text-2xl">
                             <h3 className="text-3xl">Cpf do titular</h3>
                             <div className="flex pl-1 cursor-pointer"> 
-                                <input defaultValue="56245687615" />
-                                <BiEdit/>
+                                <input  value={fieldValues.cpf || user?.cpf} onChange={(e) => handleFieldChange('cpf', e.target.value)}/>
+                                <button data-field="cpf"  disabled={!fieldValues.cpf.trim()} onClick={handleProfileFieldEdit} type="button"><BiEdit/></button>
                             </div>
                         </div>
                         <div className="flex flex-col text-2xl">
-                            <h3 className="text-3xl">Telefone do titular</h3>
+                            <h3 className="text-3xl">Telefone</h3>
                             <div className="pl-1 flex cursor-pointer">
-                                <input defaultValue="62986240897" />
-                                <BiEdit/>
+                                <input value={fieldValues.phone || user?.phone} onChange={(e) => handleFieldChange('phone', e.target.value)}/>
+                                <button data-field="phone"  disabled={!fieldValues.phone.trim()} onClick={handleProfileFieldEdit} type="button"><BiEdit/></button>
                             </div>
                         </div>
                     </div>
@@ -48,23 +133,30 @@ const Profile = () =>{
                         <div className="flex flex-col text-2xl">
                             <h3 className="text-3xl">Alterar senha</h3>
                             <div className="flex pl-1 cursor-pointer"> 
-                                <input defaultValue="*********" />
-                                <BiEdit/>
+                                <input type="password" defaultValue="*********" onChange={(e) => handleFieldChange('password', e.target.value)}/>
+                                <button data-field="password"  disabled={!fieldValues.password.trim()} onClick={handleProfileFieldEdit} type="button"><BiEdit/></button>
                             </div>
                         </div>
                         <div className="flex flex-col text-2xl">
                             <h3 className="text-3xl">Cargo</h3>
                             <div className="pl-1 flex cursor-pointer">
-                                <input defaultValue="Administrador" />
-                                <BiEdit/>
+                                <input value={user?.isAdmin ? "Funcionário" : "Aluno"} disabled/>
                             </div>
                         </div>
                     </div>
                     <div className="p-3 shadow-lg"></div>
                     <div className="flex flex-col mt-5 justify-center items-center">
                         <h3 className="text-3xl">Plano do perfil atual</h3>
-                        <select className="text-3xl appearance-none mt-5">
-                            <option>Arrumar emprego!</option>
+                        <select value={currentPlan ? currentPlan.id : "no-plan"} onChange={handlePlanChange}>
+                            <option value="no-plan">Cliente não tem plano</option>
+                            {plans.map((plan) => (
+                                <option
+                                    key={plan.id}
+                                    value={plan.id}
+                                >
+                                    {`${plan.name} valor:${plan.price} duração:${plan.validity}`}
+                                </option>
+                            ))}
                         </select>
                     </div>
                 </main>
@@ -88,6 +180,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
     
     return {
-      props:{}
+      props:{},
     }
 }

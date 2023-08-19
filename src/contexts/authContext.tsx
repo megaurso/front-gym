@@ -66,6 +66,10 @@ export const AuthProvider = ({children}: Props)=>{
                 maxAge:60 * 60,
                 path: "/"
             })
+            setCookie(null,"user.user_id",response.data.user_id,{
+                maxAge:60 * 60,
+                path: "/"
+            })
         })
         .then(()=>{
             Toast({message:'Seja bem vindo!',isSucess:true})
