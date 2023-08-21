@@ -20,6 +20,7 @@ const config: Config = {
         amarelo: "#ffbb00",
         azul: "#4564ba",
         "branco-90": "#e6e6e6",
+        "azul-50": "#e5ecff"
       },
     },
   },

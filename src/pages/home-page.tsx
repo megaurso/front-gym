@@ -4,6 +4,7 @@ import UserModal from "@/components/modal/userModal"
 import { UserInfoType } from "@/schema/user.schema"
 import { getAllUser, startingTraining, stopTraining } from "@/services/api.requsitions"
 import { GetServerSideProps } from "next"
+import Link from "next/link"
 import nookies, { parseCookies } from "nookies"
 import { useEffect, useState } from "react"
 import {LiaSearchSolid} from "react-icons/lia"
@@ -138,13 +139,15 @@ const HomePage = () => {
                       <div className="flex gap-5">
                         <ul className="w-10/12 border-2 border-azul rounded-md mt-5">
                           {displayedUsers.map((user) => (
-                            <li key={user.id}>
-                              <CardUser
-                                cpf={user.cpf}
-                                name={user.name}
-                                isAdmin={user.isAdmin}
-                                working_out={user.working_out}
-                              />
+                            <li className="hover:border-amarelo hover:border-4" key={user.id}>
+                              <Link href={`/profile/${user.id}`}>
+                                <CardUser
+                                  cpf={user.cpf}
+                                  name={user.name}
+                                  isAdmin={user.isAdmin}
+                                  working_out={user.working_out}
+                                />
+                              </Link>
                             </li>
                           ))}
                         </ul>
@@ -158,20 +161,22 @@ const HomePage = () => {
                         </ul> 
                       </div>
                     <div className="flex justify-center">
-              <button
-                onClick={handlePreviousPage}
-                disabled={!prevPageUrl}
-                className="mr-3 px-4 py-2 rounded-md bg-gray-200"
-              >
-                Página Anterior
-              </button>
-              <button
-                onClick={handleNextPage}
-                disabled={!nextPageUrl}
-                className="ml-3 px-4 py-2 rounded-md bg-gray-200"
-              >
-                Próxima Página
-              </button>
+                  <div className="mt-5">
+                    <button
+                      onClick={handlePreviousPage}
+                      disabled={!prevPageUrl}
+                      className="mr-3 px-4 py-2 rounded-md bg-gray-200  hover:bg-azul hover:text-branco-90"
+                    >
+                      Página Anterior
+                    </button>
+                    <button
+                      onClick={handleNextPage}
+                      disabled={!nextPageUrl}
+                      className="ml-3 px-4 py-2 rounded-md bg-gray-200 hover:bg-azul hover:text-branco-90"
+                    >
+                      Próxima Página
+                    </button>
+                  </div>
             </div>
           </section>
         </main>

@@ -1,24 +1,27 @@
 import HeaderHomes from "@/components/headers/header.homes"
+import Toast from "@/components/toast";
+import { PlansInfo } from "@/schema/plans.schemas";
+import { InfoUserEdit } from "@/schema/user.schema";
+import { deleteUser, editUser, getOnePlan, getPlans, getUser } from "@/services/api.requsitions";
 import { GetServerSideProps } from "next"
-import {BiEdit} from "react-icons/bi"
+import Image from "next/image";
+import Link from "next/link"
+import { useRouter } from "next/router";
 import nookies, { destroyCookie, parseCookies } from "nookies"
-import { useEffect, useState } from "react"
-import { PlansInfo } from "@/schema/plans.schemas"
-import { deleteUser, editUser, getOnePlan, getPlans, getUser } from "@/services/api.requsitions"
-import { InfoUserEdit } from "@/schema/user.schema"
-import Toast from "@/components/toast"
-import { useRouter } from "next/router"
-import PlansModal from "@/components/modal/plansModal"
+import { useEffect, useState } from "react";
+import { BiEdit } from "react-icons/bi";
 
-const Profile = () =>{
-    const router = useRouter();
+const ProfileUser = () =>{
     const cookies = parseCookies()
     const token = cookies["user.token"]
-    const userId = cookies["user.user_id"]
+    const router = useRouter();
+    const { id } = router.query;
+    const userId = typeof id === 'string' ? id : '';
+
     const [plans, setPlans] = useState<PlansInfo[]>([]);
-    const [currentPlan, setCurrentPlan] = useState<PlansInfo | null>();
     const [user, setUser] = useState<InfoUserEdit>();
     const [loading,setLoading] = useState(false)
+    const [currentPlan, setCurrentPlan] = useState<PlansInfo | null>();
     const [fieldValues, setFieldValues] = useState({
         name: user?.name || "",
         email: user?.email || "",
@@ -26,8 +29,7 @@ const Profile = () =>{
         phone: user?.phone || "",
         password: "", 
     });
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    
+
     useEffect(()=>{
         const fetchData = async () => {
             const allPlans = await getPlans(token)
@@ -44,7 +46,7 @@ const Profile = () =>{
         }
         fetchData()
     },[token,loading])
-    
+
     const handlePlanChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedPlanId = e.target.value;
         setLoading(true)
@@ -69,10 +71,8 @@ const Profile = () =>{
 
     const handleDeleteUser = async (token:string) => {
         try {
-            destroyCookie(null, "user.token");
-            destroyCookie(null, "user.user_id");
             await deleteUser(token,userId)
-            router.push('/login');
+            router.push('/home-page');
 
         } catch (error) {
             console.log(error)
@@ -105,18 +105,21 @@ const Profile = () =>{
        
     }
 
-    const handleOpenModal = () => {
-        setIsModalOpen(true);
-    };
-    
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
-
+    const handleLogout = () =>{
+        destroyCookie(null, "user.token");
+        destroyCookie(null, "user.user_id");
+    }
     return (
         <div className="w-screen h-screen">
             <div className="container mx-auto p-6 rounded-lg shadow-2xl flex flex-col">
-                <HeaderHomes href={"/home-page"} linkText={"Inicio"}/>
+                <header className="flex justify-between w-full mb-4 font-bold">
+                    <h3 className="text-6xl text-amarelo font-extrabold">BEARFIT</h3>                    
+                    <div className="flex w-2/6">
+                        <Link href={"/home-page"} className="buttonHomes">Inicio</Link>
+                        <div className="pl-3 flex justify-center items-center text-azul text-4xl">|</div>
+                        <Link href={"/"} onClick={handleLogout} className="buttonHomes">Sair</Link>
+                    </div>
+                </header>
                 <main>
                     <div className="border border-t-2 mt-5 pt-5 border-t-azul flex items-center justify-between">
                         <h2 className="text-4xl font-bold text-azul">Informações da conta</h2>
@@ -173,10 +176,10 @@ const Profile = () =>{
                         </div>
                     </div>
                     <div className="p-3 shadow-lg"></div>
-                    <div className="flex gap-10 mt-5 justify-around w-full">
-                        <div className="flex flex-col justify-start items-start">
+                    <div className="flex gap-10 mt-5 justify-center w-full">
+                        <div className="flex flex-col justify-center items-cejustify-center">
                             <h3 className="text-3xl text-azul font-bold mb-5">Plano do perfil atual</h3>
-                            <select className="flex justify-center outline-none items-center border-2 text-azul border-azul rounded-md h-10" value={currentPlan ? currentPlan.id : "no-plan"} onChange={handlePlanChange}>
+                            <select className="flex justify-center outline-none items-center border-2 text-azul border-azul rounded-md h-10 " value={currentPlan ? currentPlan.id : "no-plan"} onChange={handlePlanChange}>
                                 <option value="no-plan">Cliente não tem plano</option>
                                 {plans.map((plan) => (
                                     <option
@@ -189,19 +192,16 @@ const Profile = () =>{
                             </select>
                         </div>
                         <div>
-                            <h3 className="text-4xl text-azul font-bold flex items-start justify-start pr-36 mb-5">Planos</h3>
-                            <button onClick={handleOpenModal} className="bg-azul rounded-sm h-10 text-amarelo text-2xl w-full">Planos</button>
                         </div>
                     </div>
                 </main>
             </div>
-            <PlansModal isOpen={isModalOpen} onClose={handleCloseModal} />
         </div>
 
     )
 }
 
-export default Profile
+export default ProfileUser
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const cookies = nookies.get(ctx)
