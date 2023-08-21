@@ -32,4 +32,6 @@
   .main {
     @apply w-screen h-full bg-[url('/happy.avif')] bg-no-repeat bg-cover;
   }
+
+  
 }

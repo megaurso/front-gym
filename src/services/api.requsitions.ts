@@ -3,9 +3,9 @@ import api from "./api";
 import { UserProps } from "@/interfaces/user.interface";
 import { PlansEditProps, PlansProps } from "@/interfaces/plans.interface";
 
-export const getAllUser = async (token: string) => {
+export const getAllUser = async (token: string, page: number) => {
   try {
-    const response = await api.get("/api/users", {
+    const response = await api.get(`/api/users?page=${page}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -131,12 +131,12 @@ export const getOnePlan = async (token: string, idPlan: string) => {
 
 export const deletePlan = async (token: string, idPlan: string) => {
   try {
-    await api.delete(`/api/users/${idPlan}`, {
+    await api.delete(`api/plans/${idPlan}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    Toast({ message: "Sua conta foi excluida!", isSucess: true });
+    Toast({ message: "Plano foi excluido!", isSucess: true });
   } catch (error) {
     console.log(error);
     return error;
@@ -145,7 +145,7 @@ export const deletePlan = async (token: string, idPlan: string) => {
 
 export const startingTraining = async (token: string, userId: string) => {
   try {
-    const response = await api.post("/api/working-out", userId, {
+    const response = await api.post("/api/working-out", { user_id: userId }, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -153,6 +153,7 @@ export const startingTraining = async (token: string, userId: string) => {
     Toast({ message: "Usuário começou a treinar", isSucess: true });
     return response.data;
   } catch (error) {
+    Toast({message:"Usuário não tem plano para iniciar o treino.", isSucess: false});
     console.log(error);
   }
 };
@@ -163,7 +164,9 @@ export const stopTraining = async (token: string, userId: string) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      
     });
+    Toast({ message: "Usuário parou de treinar", isSucess: true });
   } catch (error) {
     console.log(error);
   }

@@ -1,14 +1,17 @@
 import HeaderHomes from "@/components/headers/header.homes"
 import { GetServerSideProps } from "next"
 import {BiEdit} from "react-icons/bi"
-import nookies, { parseCookies } from "nookies"
+import nookies, { destroyCookie, parseCookies } from "nookies"
 import { use, useEffect, useRef, useState } from "react"
 import { PlansInfo } from "@/schema/plans.schemas"
-import { editUser, getOnePlan, getPlans, getUser } from "@/services/api.requsitions"
+import { deleteUser, editUser, getOnePlan, getPlans, getUser } from "@/services/api.requsitions"
 import { InfoUserEdit } from "@/schema/user.schema"
 import Toast from "@/components/toast"
+import { useRouter } from "next/router"
+import PlansModal from "@/components/modal/plansModal"
 
 const Profile = () =>{
+    const router = useRouter();
     const cookies = parseCookies()
     const token = cookies["user.token"]
     const userId = cookies["user.user_id"]
@@ -23,6 +26,7 @@ const Profile = () =>{
         phone: user?.phone || "",
         password: "", 
     });
+    const [isModalOpen, setIsModalOpen] = useState(false);
     
     useEffect(()=>{
         const fetchData = async () => {
@@ -63,6 +67,18 @@ const Profile = () =>{
         }
     };
 
+    const handleDeleteUser = async (token:string) => {
+        try {
+            destroyCookie(null, "user.token");
+            destroyCookie(null, "user.user_id");
+            await deleteUser(token,userId)
+            router.push('/login');
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     const handleFieldChange = (field: string, value: string) => {
         setFieldValues((prevFieldValues) => ({
           ...prevFieldValues,
@@ -88,6 +104,14 @@ const Profile = () =>{
         }
        
     }
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+    
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
 
     return (
         <div className="w-screen h-screen">
@@ -145,7 +169,7 @@ const Profile = () =>{
                         </div>
                     </div>
                     <div className="p-3 shadow-lg"></div>
-                    <div className="flex flex-col mt-5 justify-center items-center">
+                    <div className="flex flex-col gap-10 mt-5 justify-center items-center">
                         <h3 className="text-3xl">Plano do perfil atual</h3>
                         <select value={currentPlan ? currentPlan.id : "no-plan"} onChange={handlePlanChange}>
                             <option value="no-plan">Cliente não tem plano</option>
@@ -158,9 +182,12 @@ const Profile = () =>{
                                 </option>
                             ))}
                         </select>
+                        <button onClick={handleOpenModal} className="bg-amarelo text-branco-90">Planos</button>
+                        <button onClick={()=> handleDeleteUser(token)} className="bg-red-500 text-branco-90">Deletar conta</button>
                     </div>
                 </main>
             </div>
+            <PlansModal isOpen={isModalOpen} onClose={handleCloseModal} />
         </div>
 
     )

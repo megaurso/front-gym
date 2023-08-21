@@ -1,7 +1,7 @@
 export interface PlansProps {
     name:string;
 	price: number;
-	validity: string;
+	validity: "Mensal" | "Trimestral" | "Semestral" | "Anual";
 }
 
 export interface PlansEditProps {
