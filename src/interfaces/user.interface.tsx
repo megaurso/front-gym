@@ -7,3 +7,10 @@ export interface UserProps {
 	phone?:string;
 	current_plan?:string;
 }
+
+export interface UserCardProps {
+	name:string;
+	cpf:string;
+	isAdmin:boolean | undefined;
+	working_out:boolean | undefined;
+}

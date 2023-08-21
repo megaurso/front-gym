@@ -13,6 +13,7 @@ interface Props{
 
 interface authProviderData {
     register: (userData: UserData) => void;
+    registerHome: (userData: UserData) => void;
     login: (loginData:LoginData) => void;
 }
 
@@ -58,11 +59,54 @@ export const AuthProvider = ({children}: Props)=>{
             }
         });
     }
+
+    const registerHome = (userData:UserData)=>{
+        api
+        .post("/api/users", userData)
+        .then(()=>{
+            Toast({message: "Usuario cadastrado!", isSucess:true})
+            window.location.reload();
+        })
+        .catch((err) => {
+            console.log(err);
+        
+            if (err.response && err.response.data && err.response.data.errors) {
+                const errorMessage = err.response.data.errors;
+        
+                if (errorMessage.includes('Email já cadastrado')) {
+                    Toast({
+                        message: 'O email já está em uso. Por favor, utilize outro email.',
+                        isSucess: false
+                    });
+                } else if (errorMessage.includes('CPF já cadastrado')) {
+                    Toast({
+                        message: 'O CPF já está em uso. Por favor, utilize outro CPF.',
+                        isSucess: false
+                    });
+                } else {
+                    Toast({
+                        message: 'Ocorreu um erro: ' + errorMessage,
+                        isSucess: false
+                    });
+                }
+            } else {
+                Toast({
+                    message: 'Ocorreu um erro ao processar a criação. Por favor, tente novamente mais tarde.',
+                    isSucess: false
+                });
+            }
+        });
+    }
+
     const login =(loginData:LoginData)=>{
         api
         .post("/api/auth/login",loginData)
         .then((response)=>{
             setCookie(null,"user.token",response.data.token,{
+                maxAge:60 * 60,
+                path: "/"
+            })
+            setCookie(null,"user.user_id",response.data.user_id,{
                 maxAge:60 * 60,
                 path: "/"
             })
@@ -76,7 +120,7 @@ export const AuthProvider = ({children}: Props)=>{
             Toast({message:"Email ou senha incorretas tente novamente!", isSucess:false})
         });
     }
-    return <AuthContext.Provider value={{register,login}}>{children}</AuthContext.Provider>
+    return <AuthContext.Provider value={{register,registerHome,login}}>{children}</AuthContext.Provider>
 }
 
 export const useAuth = () => useContext(AuthContext)
