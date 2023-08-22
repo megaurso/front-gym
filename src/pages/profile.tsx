@@ -9,9 +9,9 @@ import { InfoUserEdit } from "@/schema/user.schema"
 import Toast from "@/components/toast"
 import { useRouter } from "next/router"
 import PlansModal from "@/components/modal/plansModal"
+import DeleteModal from "@/components/modal/deleteModal"
 
 const Profile = () =>{
-    const router = useRouter();
     const cookies = parseCookies()
     const token = cookies["user.token"]
     const userId = cookies["user.user_id"]
@@ -27,6 +27,7 @@ const Profile = () =>{
         password: "", 
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
     
     useEffect(()=>{
         const fetchData = async () => {
@@ -67,17 +68,6 @@ const Profile = () =>{
         }
     };
 
-    const handleDeleteUser = async (token:string) => {
-        try {
-            destroyCookie(null, "user.token");
-            destroyCookie(null, "user.user_id");
-            await deleteUser(token,userId)
-            router.push('/login');
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
 
     const handleFieldChange = (field: string, value: string) => {
         setFieldValues((prevFieldValues) => ({
@@ -113,14 +103,22 @@ const Profile = () =>{
         setIsModalOpen(false);
     };
 
+    const handleOpenModalDelete = () => {
+        setIsModalDeleteOpen(true);
+    };
+    
+    const handleCloseModalDelete = () => {
+        setIsModalDeleteOpen(false);
+    };
+
     return (
         <div className="w-screen h-screen">
             <div className="container mx-auto p-6 rounded-lg shadow-2xl flex flex-col">
                 <HeaderHomes href={"/home-page"} linkText={"Inicio"}/>
                 <main>
-                    <div className="border border-t-2 mt-5 pt-5 border-t-azul flex items-center justify-between">
+                    <div className="border-t-2 mt-5 pt-5 border-t-azul flex items-center justify-between">
                         <h2 className="text-4xl font-bold text-azul">Informações da conta</h2>
-                        <button onClick={()=> handleDeleteUser(token)} className="mr-60 text-3xl text-branco-90 p-3 rounded-lg hover:bg-red-700 border-2 bg-red-400 flex items-center justify-center">Deletar conta</button>
+                        <button onClick={handleOpenModalDelete} className="text-sm text-branco-90 p-3 rounded-lg hover:bg-red-700 border-2 bg-red-400 flex items-center justify-center">Deletar conta</button>
                     </div>
                     <div className="flex items-center justify-around w-full mt-20">
                         <div className="flex flex-col text-2xl">
@@ -138,7 +136,7 @@ const Profile = () =>{
                             </div>
                         </div>
                     </div>
-                    <div className="p-3 shadow-lg"></div>
+                    <div className="p-3"></div>
                     <div className="flex mt-5 items-center justify-around w-full">
                         <div className="flex flex-col text-2xl">
                             <h3 className="text-lg text-azul">CPF do titular</h3>
@@ -155,7 +153,7 @@ const Profile = () =>{
                             </div>
                         </div>                        
                     </div>
-                    <div className="p-3 shadow-lg"></div>
+                    <div className="p-3"></div>
                     <div className="flex mt-5 items-center justify-around w-full">
                         
                         <div className="flex flex-col text-2xl">
@@ -168,11 +166,11 @@ const Profile = () =>{
                         <div className="flex flex-col text-2xl">
                             <h3 className="text-lg text-azul">Ocupação</h3>
                             <div className="pl-1 flex border border-azul rounded-md text-azul">
-                                <input value={user?.isAdmin ? "Funcionário" : "Aluno"} disabled className="p-1 w-72"/>
+                                <input value={user?.isAdmin ? "Funcionário" : "Aluno"} disabled className="p-1 mr-5 w-72"/>
                             </div>
                         </div>
                     </div>
-                    <div className="p-3 shadow-lg"></div>
+                    <div className="p-3 mt-8 shadow-lg"></div>
                     <div className="flex gap-10 mt-5 justify-around w-full">
                         <div className="flex flex-col justify-start items-start">
                             <h3 className="text-3xl text-azul font-bold mb-5">Plano do perfil atual</h3>
@@ -189,12 +187,13 @@ const Profile = () =>{
                             </select>
                         </div>
                         <div>
-                            <h3 className="text-4xl text-azul font-bold flex items-start justify-start pr-36 mb-5">Planos</h3>
-                            <button onClick={handleOpenModal} className="bg-azul rounded-sm h-10 text-amarelo text-2xl w-full">Planos</button>
+                            <h3 className="text-3xl text-azul font-bold flex items-start justify-start mb-5">Configuração de planos</h3>
+                            <button onClick={handleOpenModal} className="bg-azul rounded-sm h-10 text-amarelo text-2xl w-full hover:bg-amarelo hover:text-azul">Editar</button>
                         </div>
                     </div>
                 </main>
             </div>
+            <DeleteModal isOpen={isModalDeleteOpen} onClose={handleCloseModalDelete} userId={userId}/>
             <PlansModal isOpen={isModalOpen} onClose={handleCloseModal} />
         </div>
 

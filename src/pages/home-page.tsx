@@ -105,7 +105,7 @@ const HomePage = () => {
 
   return (
     <div>
-      <div className="font-montserrat mt-5 container mx-auto border border-gray-300 p-10 shadow-2xl flex flex-col bg-slate-100">
+      <div className="font-montserrat mt-5 container mx-auto border border-gray-300 p-10 shadow-2xl flex flex-col">
         <HeaderHomes href={"/profile"} linkText={"Perfil"}/>
           <main className="mt-7 border-t-4 rounded-sm border-blue-400">
             <section className="flex justify-between space-x-10 shadow-2xl mt-7">
@@ -128,7 +128,7 @@ const HomePage = () => {
                     <div className="flex gap-5">
                       <div className="w-10/12 border-2 h-12 p-4 flex justify-between items-center text-2xl text-gray-400 border-azul mt-5 rounded-md">
                         <span className="w-3/6">Nome de cadastro</span>
-                        <span className="w-1/6" ><span className="text-azul text-2xl pr-3">|</span>N° de cpf</span>
+                        <span className="w-1/6" ><span className="text-azul text-2xl pr-3">|</span>N° de CPF</span>
                         <span className="w-1/6"><span className="text-azul text-2xl pr-3">|</span>Ocupação</span>
                         <span className="w-1/6"><span className="text-azul text-2xl pr-3">|</span>Status</span>
                       </div>

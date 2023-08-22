@@ -1,4 +1,5 @@
 import HeaderHomes from "@/components/headers/header.homes"
+import DeleteModal from "@/components/modal/deleteModal";
 import Toast from "@/components/toast";
 import { PlansInfo } from "@/schema/plans.schemas";
 import { InfoUserEdit } from "@/schema/user.schema";
@@ -29,6 +30,7 @@ const ProfileUser = () =>{
         phone: user?.phone || "",
         password: "", 
     });
+    const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
 
     useEffect(()=>{
         const fetchData = async () => {
@@ -69,16 +71,6 @@ const ProfileUser = () =>{
         }
     };
 
-    const handleDeleteUser = async (token:string) => {
-        try {
-            await deleteUser(token,userId)
-            router.push('/home-page');
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
     const handleFieldChange = (field: string, value: string) => {
         setFieldValues((prevFieldValues) => ({
           ...prevFieldValues,
@@ -109,11 +101,19 @@ const ProfileUser = () =>{
         destroyCookie(null, "user.token");
         destroyCookie(null, "user.user_id");
     }
+
+    const handleOpenModalDelete = () => {
+        setIsModalDeleteOpen(true);
+    };
+    
+    const handleCloseModalDelete = () => {
+        setIsModalDeleteOpen(false);
+    };
     return (
         <div className="w-screen h-screen">
             <div className="container mx-auto p-6 rounded-lg shadow-2xl flex flex-col">
-                <header className="flex justify-between w-full mb-4 font-bold">
-                    <h3 className="text-6xl text-amarelo font-extrabold">BEARFIT</h3>                    
+                <header className="flex justify-between w-full mb-4 font-bold items-center">
+                    <Image src={"/logo.svg"} width={300} height={300} alt="logo" className="mb-2"></Image>
                     <div className="flex w-2/6">
                         <Link href={"/home-page"} className="buttonHomes">Inicio</Link>
                         <div className="pl-3 flex justify-center items-center text-azul text-4xl">|</div>
@@ -121,9 +121,9 @@ const ProfileUser = () =>{
                     </div>
                 </header>
                 <main>
-                    <div className="border border-t-2 mt-5 pt-5 border-t-azul flex items-center justify-between">
+                    <div className="border-t-2 mt-5 pt-5 border-t-azul flex items-center justify-between">
                         <h2 className="text-4xl font-bold text-azul">Informações da conta</h2>
-                        <button onClick={()=> handleDeleteUser(token)} className="mr-60 text-3xl text-branco-90 p-3 rounded-lg hover:bg-red-700 border-2 bg-red-400 flex items-center justify-center">Deletar conta</button>
+                        <button onClick={handleOpenModalDelete} className="text-sm text-branco-90 p-3 rounded-lg hover:bg-red-700 border-2 bg-red-400 flex items-center justify-center">Deletar conta</button>
                     </div>
                     <div className="flex items-center justify-around w-full mt-20">
                         <div className="flex flex-col text-2xl">
@@ -141,7 +141,7 @@ const ProfileUser = () =>{
                             </div>
                         </div>
                     </div>
-                    <div className="p-3 shadow-lg"></div>
+                    <div className="p-3"></div>
                     <div className="flex mt-5 items-center justify-around w-full">
                         <div className="flex flex-col text-2xl">
                             <h3 className="text-lg text-azul">CPF do titular</h3>
@@ -158,7 +158,7 @@ const ProfileUser = () =>{
                             </div>
                         </div>                        
                     </div>
-                    <div className="p-3 shadow-lg"></div>
+                    <div className="p-3"></div>
                     <div className="flex mt-5 items-center justify-around w-full">
                         
                         <div className="flex flex-col text-2xl">
@@ -171,11 +171,11 @@ const ProfileUser = () =>{
                         <div className="flex flex-col text-2xl">
                             <h3 className="text-lg text-azul">Ocupação</h3>
                             <div className="pl-1 flex border border-azul rounded-md text-azul">
-                                <input value={user?.isAdmin ? "Funcionário" : "Aluno"} disabled className="p-1 w-72"/>
+                                <input value={user?.isAdmin ? "Funcionário" : "Aluno"} disabled className="p-1 mr-5 w-72"/>
                             </div>
                         </div>
                     </div>
-                    <div className="p-3 shadow-lg"></div>
+                    <div className="p-3 mt-8 shadow-lg"></div>
                     <div className="flex gap-10 mt-5 justify-center w-full">
                         <div className="flex flex-col justify-center items-cejustify-center">
                             <h3 className="text-3xl text-azul font-bold mb-5">Plano do perfil atual</h3>
@@ -196,8 +196,8 @@ const ProfileUser = () =>{
                     </div>
                 </main>
             </div>
+            <DeleteModal isOpen={isModalDeleteOpen} onClose={handleCloseModalDelete} userId={userId}/>
         </div>
-
     )
 }
 
