@@ -21,7 +21,7 @@ export const infoUserEdit = userSchema.extend({
   current_plan: z.string().optional(), 
   name: z.string().optional(),
   email: z.string().email("Email não é valido").optional(),
-  cpf: z.string().optional(),
+  cpf: z.string().max(11),
   phone: z.string().optional(),
 });
 

@@ -1,6 +1,7 @@
 import { useAuth } from "@/contexts/authContext"
 import { UserData, loginSchema } from "@/schema/user.schema"
 import { zodResolver } from "@hookform/resolvers/zod"
+import Image from "next/image"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
 
@@ -16,7 +17,7 @@ const CardLogin =()=>{
     }
     return (
         <div className="p-6 rounded-3xl backdrop-blur-lg shadow-lg w-80 mt-56 border border-white">
-          <h2 className="text-2xl text-yellow-300 font-semibold mb-4">Bearfit</h2>
+          <Image src={"/logo.svg"} width={100} height={50} alt="logo" className="mb-2"></Image>
           <form onSubmit={handleSubmit(onFormSubmit)}>
             <input className="w-full mb-3 px-3 py-2 border rounded bg-transparent outline-none text-white" type="email" placeholder="Email" {...register("email")} required/>
             <input className="w-full mb-3 px-3 py-2 border rounded bg-transparent outline-none text-white" type="password" placeholder="Password" {...register("password")} required/>

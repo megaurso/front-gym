@@ -4,6 +4,7 @@ import UserModal from "@/components/modal/userModal"
 import { UserInfoType } from "@/schema/user.schema"
 import { getAllUser, startingTraining, stopTraining } from "@/services/api.requsitions"
 import { GetServerSideProps } from "next"
+import Link from "next/link"
 import nookies, { parseCookies } from "nookies"
 import { useEffect, useState } from "react"
 import {LiaSearchSolid} from "react-icons/lia"
@@ -104,7 +105,7 @@ const HomePage = () => {
 
   return (
     <div>
-      <div className="font-montserrat mt-5 container mx-auto border border-gray-300 p-10 shadow-2xl flex flex-col bg-slate-100">
+      <div className="font-montserrat mt-5 container mx-auto border border-gray-300 p-10 shadow-2xl flex flex-col">
         <HeaderHomes href={"/profile"} linkText={"Perfil"}/>
           <main className="mt-7 border-t-4 rounded-sm border-blue-400">
             <section className="flex justify-between space-x-10 shadow-2xl mt-7">
@@ -127,7 +128,7 @@ const HomePage = () => {
                     <div className="flex gap-5">
                       <div className="w-10/12 border-2 h-12 p-4 flex justify-between items-center text-2xl text-gray-400 border-azul mt-5 rounded-md">
                         <span className="w-3/6">Nome de cadastro</span>
-                        <span className="w-1/6" ><span className="text-azul text-2xl pr-3">|</span>N° de cpf</span>
+                        <span className="w-1/6" ><span className="text-azul text-2xl pr-3">|</span>N° de CPF</span>
                         <span className="w-1/6"><span className="text-azul text-2xl pr-3">|</span>Ocupação</span>
                         <span className="w-1/6"><span className="text-azul text-2xl pr-3">|</span>Status</span>
                       </div>
@@ -138,13 +139,15 @@ const HomePage = () => {
                       <div className="flex gap-5">
                         <ul className="w-10/12 border-2 border-azul rounded-md mt-5">
                           {displayedUsers.map((user) => (
-                            <li key={user.id}>
-                              <CardUser
-                                cpf={user.cpf}
-                                name={user.name}
-                                isAdmin={user.isAdmin}
-                                working_out={user.working_out}
-                              />
+                            <li className="hover:border-amarelo hover:border-4" key={user.id}>
+                              <Link href={`/profile/${user.id}`}>
+                                <CardUser
+                                  cpf={user.cpf}
+                                  name={user.name}
+                                  isAdmin={user.isAdmin}
+                                  working_out={user.working_out}
+                                />
+                              </Link>
                             </li>
                           ))}
                         </ul>
@@ -158,20 +161,22 @@ const HomePage = () => {
                         </ul> 
                       </div>
                     <div className="flex justify-center">
-              <button
-                onClick={handlePreviousPage}
-                disabled={!prevPageUrl}
-                className="mr-3 px-4 py-2 rounded-md bg-gray-200"
-              >
-                Página Anterior
-              </button>
-              <button
-                onClick={handleNextPage}
-                disabled={!nextPageUrl}
-                className="ml-3 px-4 py-2 rounded-md bg-gray-200"
-              >
-                Próxima Página
-              </button>
+                  <div className="mt-5">
+                    <button
+                      onClick={handlePreviousPage}
+                      disabled={!prevPageUrl}
+                      className="mr-3 px-4 py-2 rounded-md bg-gray-200  hover:bg-azul hover:text-branco-90"
+                    >
+                      Página Anterior
+                    </button>
+                    <button
+                      onClick={handleNextPage}
+                      disabled={!nextPageUrl}
+                      className="ml-3 px-4 py-2 rounded-md bg-gray-200 hover:bg-azul hover:text-branco-90"
+                    >
+                      Próxima Página
+                    </button>
+                  </div>
             </div>
           </section>
         </main>
