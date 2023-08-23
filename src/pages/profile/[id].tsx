@@ -1,9 +1,8 @@
-import HeaderHomes from "@/components/headers/header.homes"
-import DeleteModal from "@/components/modal/deleteModal";
+import DeleteUserModal from "@/components/modal/deleteUserModal";
 import Toast from "@/components/toast";
 import { PlansInfo } from "@/schema/plans.schemas";
 import { InfoUserEdit } from "@/schema/user.schema";
-import { deleteUser, editUser, getOnePlan, getPlans, getUser } from "@/services/api.requsitions";
+import {  editUser, getOnePlan, getPlans, getUser } from "@/services/api.requsitions";
 import { GetServerSideProps } from "next"
 import Image from "next/image";
 import Link from "next/link"
@@ -37,7 +36,10 @@ const ProfileUser = () =>{
             const allPlans = await getPlans(token)
             const userData = await getUser(token, userId)
             setUser(userData)
-            setPlans(allPlans.data)
+            if (allPlans && allPlans.data) {
+                setPlans(allPlans.data);
+            }
+
             if (userData && userData.current_plan) {
                 const userPlan = await getOnePlan(token, userData.current_plan);
                 
@@ -196,7 +198,7 @@ const ProfileUser = () =>{
                     </div>
                 </main>
             </div>
-            <DeleteModal isOpen={isModalDeleteOpen} onClose={handleCloseModalDelete} userId={userId}/>
+            <DeleteUserModal isOpen={isModalDeleteOpen} onClose={handleCloseModalDelete} userId={userId}/>
         </div>
     )
 }

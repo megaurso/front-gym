@@ -1,26 +1,34 @@
 import { ModalProps } from "@/interfaces/moda.interface";
 import { PlansInfo, plansSchema } from "@/schema/plans.schemas";
 import { createPlans, deletePlan, getPlans } from "@/services/api.requsitions";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/router";
 import { parseCookies } from "nookies";
 import { useEffect, useState } from "react";
 import {useForm} from "react-hook-form"
 
 const PlansModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
+    const router = useRouter();
     const cookies = parseCookies();
     const token = cookies["user.token"];
-    const [loading, setLoading] = useState(false);
+    const [plansLoaded, setPlansLoaded] = useState(false);
     const [plans, setPlans] = useState<PlansInfo[]>([]);
 
-
-    useEffect(()=>{
-        fetchData()
-    },[loading])
+    useEffect(() => {
+        if (isOpen && !plansLoaded) {
+          fetchData();
+          setPlansLoaded(true);
+        }
+    }, [isOpen, plansLoaded]);
 
     const fetchData = async () => {
-        setLoading(true)
         const allPlansData = await getPlans(token);
-        setPlans(allPlansData.data);
+    
+        if (allPlansData && allPlansData.data) {
+            setPlans(allPlansData.data);
+        } else {
+            setPlans([]);
+        }
+    
     };
 
     const {
@@ -32,37 +40,37 @@ const PlansModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
     const handleCreatePlan = async (data: any) => {
         try {
-            setLoading(true);
+            setPlansLoaded(true);
+
             data.price = parseFloat(data.price.replace(",", "."));
             await createPlans(token, data);
             fetchData();
         } catch (error) {
             console.error("Erro ao criar plano:", error);
-        } finally {
-            setLoading(false);
+        }finally{
+            setPlansLoaded(false);
         }
     };
 
-  
-    
     if (!isOpen) {
         return null;
     }
 
     const handleCancelClick = () => {
         onClose();
-        setLoading(false);
+        router.reload()
     };  
 
     const handleDeletePlan = async (token:string,userId:string) => {
         try {
-            setLoading(true);
+            setPlansLoaded(true);
             await deletePlan(token,userId)
 
         } catch (error) {
+            
             console.log(error)
         }finally{
-            setLoading(false);
+            setPlansLoaded(false);
         }
     }
 

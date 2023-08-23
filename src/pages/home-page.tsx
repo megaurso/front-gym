@@ -1,8 +1,8 @@
 import CardUser from "@/components/cardUser"
 import HeaderHomes from "@/components/headers/header.homes"
 import UserModal from "@/components/modal/userModal"
-import { UserInfoType } from "@/schema/user.schema"
-import { getAllUser, startingTraining, stopTraining } from "@/services/api.requsitions"
+import { InfoUserEdit, UserInfoType } from "@/schema/user.schema"
+import { getAllUser, getUser, startingTraining, stopTraining } from "@/services/api.requsitions"
 import { GetServerSideProps } from "next"
 import Link from "next/link"
 import nookies, { parseCookies } from "nookies"
@@ -24,9 +24,17 @@ const HomePage = () => {
   const [prevPageUrl, setPrevPageUrl] = useState<string | null>(null);
   const [createdId, setCreatedId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [user, setUser] = useState<InfoUserEdit>();
 
   useEffect(() => {
     fetchData(currentPage);
+    
+    const user = async () =>{
+      const userData = await getUser(token, userId)
+      setUser(userData)
+    }
+    user()
+    
 
   }, [token,loadingNext,userId]);
 
@@ -109,7 +117,7 @@ const HomePage = () => {
         <HeaderHomes href={"/profile"} linkText={"Perfil"}/>
           <main className="mt-7 border-t-4 rounded-sm border-blue-400">
             <section className="flex justify-between space-x-10 shadow-2xl mt-7">
-              <h2 className="text-5xl text-azul mb-7 font-bold">Bem-vindo Bernardo!</h2>
+              <h2 className="text-5xl text-azul mb-7 font-bold">Bem-vindo {user?.name}</h2>
               <button onClick={handleOpenModal} className="mr-5 p-5 h-16 hover:bg-azul hover:text-branco-90 rounded-md flex justify-center items-center bg-branco-90">Criar novo usuário</button>   
             </section>
               <section>
