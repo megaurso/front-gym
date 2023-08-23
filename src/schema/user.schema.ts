@@ -3,7 +3,7 @@ import { z } from "zod";
 export const userSchema = z.object({
   name: z.string().nonempty("Nome é obrigatório!"),
   email: z.string().email("Email não é valido").nonempty("Email é obrigatório"),
-  password: z.string().nonempty("Senha é obrigatória"),
+  password: z.string().nonempty("Senha é obrigatória").min(7),
   cpf: z.string().nonempty("Cpf é obrigatório").refine((value) => value.length === 11, {
     message: "O CPF deve conter 11 dígitos!",
   }),

@@ -34,7 +34,10 @@ const Profile = () =>{
             const allPlans = await getPlans(token)
             const userData = await getUser(token, userId)
             setUser(userData)
-            setPlans(allPlans.data)
+            if (allPlans && allPlans.data) {
+                setPlans(allPlans.data);
+            }
+    
             if (userData && userData.current_plan) {
                 const userPlan = await getOnePlan(token, userData.current_plan);
                 

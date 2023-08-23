@@ -44,7 +44,7 @@ const UserModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-opacity-50 bg-gray-900">
           <div  className="bg-branco-90 rounded-lg p-8">
-            <h2 className="text-2xl font-semibold mb-4">Criar Novo Usuário</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-azul">Criar Novo Usuário</h2>
             <form onSubmit={handleSubmit(onFormSubmit)}>
               <div className="mb-4">
                 <label className="block text-azul font-medium mb-1">Nome:</label>
