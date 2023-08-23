@@ -191,7 +191,7 @@ const Profile = () =>{
                         </div>
                         <div>
                             <h3 className="text-3xl text-azul font-bold flex items-start justify-start mb-5">Configuração de planos</h3>
-                            <button onClick={handleOpenModal} className="bg-azul rounded-sm h-10 text-amarelo text-2xl w-full hover:bg-amarelo hover:text-azul">Editar</button>
+                            <button onClick={handleOpenModal} className="bg-azul rounded-sm h-10 text-amarelo text-2xl w-full hover:bg-amarelo hover:text-azul">Criar/Editar</button>
                         </div>
                     </div>
                 </main>
