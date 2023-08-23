@@ -1,9 +1,9 @@
 import { ModalDeleteProps } from "@/interfaces/moda.interface";
 import { deleteUser } from "@/services/api.requsitions";
 import { useRouter } from "next/router";
-import { destroyCookie, parseCookies } from "nookies";
+import { parseCookies } from "nookies";
 
-const DeleteModal: React.FC<ModalDeleteProps> =({isOpen, onClose,userId})=>{
+const DeleteUserModal: React.FC<ModalDeleteProps> =({isOpen, onClose,userId})=>{
     const cookies = parseCookies();
     const router = useRouter();
     const token = cookies["user.token"];
@@ -18,10 +18,8 @@ const DeleteModal: React.FC<ModalDeleteProps> =({isOpen, onClose,userId})=>{
 
     const handleDeleteUser = async (token:string) => {
         try {
-            destroyCookie(null, "user.token");
-            destroyCookie(null, "user.user_id");
             await deleteUser(token,userId)
-            router.push('/');
+            router.push('/home-page');
 
         } catch (error) {
             console.log(error)
@@ -46,4 +44,4 @@ const DeleteModal: React.FC<ModalDeleteProps> =({isOpen, onClose,userId})=>{
     )
 }
 
-export default DeleteModal
+export default DeleteUserModal
